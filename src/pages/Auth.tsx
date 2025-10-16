@@ -24,9 +24,7 @@ const Auth = () => {
   // Signup form state
   const [nom, setNom] = useState("");
   const [postNom, setPostNom] = useState("");
-  const [telephone, setTelephone] = useState("");
   const [numeroCarteIdentite, setNumeroCarteIdentite] = useState("");
-  const [photoProfile, setPhotoProfile] = useState<File | null>(null);
   const [documentIdentite, setDocumentIdentite] = useState<File | null>(null);
 
   useEffect(() => {
@@ -73,8 +71,8 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (!photoProfile || !documentIdentite) {
-        throw new Error("Veuillez télécharger votre photo de profil et votre document d'identité");
+      if (!documentIdentite) {
+        throw new Error("Veuillez télécharger votre document d'identité");
       }
 
       // Create user account
@@ -85,7 +83,6 @@ const Auth = () => {
           data: {
             nom,
             post_nom: postNom,
-            telephone,
             numero_carte_identite: numeroCarteIdentite,
           },
           emailRedirectTo: `${window.location.origin}/feed`,
@@ -97,19 +94,6 @@ const Auth = () => {
 
       const userId = authData.user.id;
 
-      // Upload profile photo
-      const photoExt = photoProfile.name.split('.').pop();
-      const photoPath = `${userId}/profile.${photoExt}`;
-      const { error: photoError } = await supabase.storage
-        .from('profiles')
-        .upload(photoPath, photoProfile);
-
-      if (photoError) throw photoError;
-
-      const { data: { publicUrl: photoUrl } } = supabase.storage
-        .from('profiles')
-        .getPublicUrl(photoPath);
-
       // Upload identity document
       const docExt = documentIdentite.name.split('.').pop();
       const docPath = `${userId}/identity.${docExt}`;
@@ -119,11 +103,10 @@ const Auth = () => {
 
       if (docError) throw docError;
 
-      // Update profile with URLs
+      // Update profile with document URL
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
-          photo_profil_url: photoUrl,
           document_identite_url: docPath,
         })
         .eq('id', userId);
@@ -233,17 +216,6 @@ const Auth = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="telephone">Numéro de téléphone *</Label>
-                <Input
-                  id="telephone"
-                  type="tel"
-                  value={telephone}
-                  onChange={(e) => setTelephone(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="numeroCarteIdentite">Numéro de carte d'identité *</Label>
                 <Input
                   id="numeroCarteIdentite"
@@ -263,21 +235,6 @@ const Auth = () => {
                   required
                   minLength={6}
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="photoProfile">Photo de profil *</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="photoProfile"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setPhotoProfile(e.target.files?.[0] || null)}
-                    required
-                    className="cursor-pointer"
-                  />
-                  <Upload className="h-5 w-5 text-muted-foreground" />
-                </div>
               </div>
 
               <div className="space-y-2">
