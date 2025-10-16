@@ -1,0 +1,18 @@
+# Fichier : .github/FUNDING.yml
+# Ce fichier permet d'afficher les options de sponsoring sur la page GitHub de la communauté congolaise.
+
+github: [communaute-congolaise, divinkas, opencongo, devcongo]
+patreon: communautecongolaise
+open_collective: communaute-congolaise
+ko_fi: communautecongolaise
+tidelift: ""
+community_bridge: ""
+liberapay: communautecongolaise
+issuehunt: communaute-congolaise
+lfx_crowdfunding: ""
+polar: communautecongolaise
+buy_me_a_coffee: communautecongolaise
+thanks_dev: communaute-congolaise
+custom:
+  - "https://hi-innov.vercel.app/"
+ 
