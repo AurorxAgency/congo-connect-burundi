@@ -1,73 +1,52 @@
-# Welcome to your Lovable project
+# 🇨🇬 Communauté Congolaise App
 
-## Project info
+> Une application mobile moderne pour rassembler, informer et connecter la communauté congolaise au Burundi.
 
-**URL**: https://lovable.dev/projects/3aed2639-0156-4218-a394-3b853b1738d3
+---
 
-## How can I edit this code?
+## 🌍 Présentation
 
-There are several ways of editing your application.
+**Communauté Congolaise App** est une plateforme mobile qui permet aux membres de la diaspora et aux résidents congolais au Burundi de :
+- partager des **actualités** et des **articles de blog** 📰,  
+- participer à des **discussions publiques** 💬,  
+- découvrir et publier des **activités communautaires** 📅,  
+- échanger via un **chat en direct** 🔥,  
+- et s’inscrire en toute sécurité avec une **vérification d’identité** 🪪.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3aed2639-0156-4218-a394-3b853b1738d3) and start prompting.
+## 🚀 Fonctionnalités principales
 
-Changes made via Lovable will be committed automatically to this repo.
+✅ Publication de **news** et **blogs**  
+✅ **Discussions publiques** entre membres  
+✅ **Chat** communautaire en temps réel  
+✅ **Calendrier d’activités** et d’événements  
+✅ **Authentification sécurisée** avec pièce d’identité (passeport, CPGL ou carte d’électeur)  
+✅ **Profils utilisateurs vérifiés**  
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🧱 Stack technique
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+| Composant | Technologie |
+|------------|-------------|
+| **Frontend** | React Native (Expo Router) |
+| **Backend** | Node.js + Supabase |
+| **Base de données** | PostgreSQL |
+| **Authentification** | Supabase Auth |
+| **Stockage** | Supabase Storage |
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## ⚙️ Installation (mode développement)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/<ton-utilisateur>/<ton-repo>.git
+cd <ton-repo>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 2. Installer les dépendances
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3aed2639-0156-4218-a394-3b853b1738d3) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+# 3. Lancer le projet
+npx expo start
