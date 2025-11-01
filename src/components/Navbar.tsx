@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Home, Users, Calendar, MessageCircle, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface NavbarProps {
   user?: any;
@@ -76,6 +77,8 @@ const Navbar = ({ user }: NavbarProps) => {
                 </Link>
               </Button>
 
+              <ThemeToggle />
+
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Déconnexion</span>
@@ -85,6 +88,7 @@ const Navbar = ({ user }: NavbarProps) => {
 
           {!user && (
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/auth">Connexion</Link>
               </Button>
