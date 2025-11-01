@@ -16,21 +16,34 @@ const Feed = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
+          // Clear invalid session
+          await supabase.auth.signOut();
+          navigate("/auth");
+          return;
+        }
+        
+        setUser(session.user);
+        await fetchPosts();
+      } catch (error) {
+        console.error("Auth error:", error);
+        await supabase.auth.signOut();
         navigate("/auth");
-        return;
       }
-      setUser(session.user);
-      fetchPosts();
     };
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
+        setUser(null);
         navigate("/auth");
+      } else {
+        setUser(session.user);
+        await fetchPosts();
       }
     });
 
@@ -46,8 +59,7 @@ const Feed = () => {
           *,
           profiles:user_id (
             nom,
-            post_nom,
-            photo_profil_url
+            post_nom
           )
         `)
         .order('created_at', { ascending: false });

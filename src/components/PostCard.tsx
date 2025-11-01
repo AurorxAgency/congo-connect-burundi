@@ -65,7 +65,6 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
-          <AvatarImage src={post.profiles?.photo_profil_url} />
           <AvatarFallback className="bg-primary text-white">
             {getInitials(post.profiles?.nom || "U", post.profiles?.post_nom || "U")}
           </AvatarFallback>
