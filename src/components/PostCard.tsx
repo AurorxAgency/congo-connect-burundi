@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Textarea } from "@/components/ui/textarea";
 
 interface PostCardProps {
   post: any;
@@ -18,6 +19,11 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
   const { toast } = useToast();
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
 
   const handleLike = async () => {
     if (!currentUserId) return;
@@ -43,6 +49,70 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
         setLikesCount(prev => prev + 1);
         setIsLiked(true);
       }
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchComments = async () => {
+    if (!showComments) return;
+    
+    setIsLoadingComments(true);
+    try {
+      const { data, error } = await supabase
+        .from('post_comments')
+        .select(`
+          *,
+          profiles:user_id (nom, post_nom)
+        `)
+        .eq('post_id', post.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setComments(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les commentaires",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingComments(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showComments) {
+      fetchComments();
+    }
+  }, [showComments]);
+
+  const handleAddComment = async () => {
+    if (!currentUserId || !newComment.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('post_comments')
+        .insert({
+          post_id: post.id,
+          user_id: currentUserId,
+          content: newComment.trim(),
+        });
+
+      if (error) throw error;
+
+      setNewComment("");
+      setCommentsCount(prev => prev + 1);
+      await fetchComments();
+      
+      toast({
+        title: "Succès",
+        description: "Commentaire ajouté",
+      });
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -96,15 +166,82 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
           <Heart className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`} />
           {likesCount}
         </Button>
-        <Button variant="ghost" size="sm">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => setShowComments(!showComments)}
+        >
           <MessageCircle className="h-4 w-4 mr-2" />
-          {post.comments_count || 0}
+          {commentsCount}
         </Button>
         <Button variant="ghost" size="sm">
           <Share2 className="h-4 w-4 mr-2" />
           Partager
         </Button>
       </CardFooter>
+
+      {showComments && (
+        <div className="border-t px-6 pb-6">
+          <div className="space-y-4 mt-4">
+            {isLoadingComments ? (
+              <p className="text-sm text-muted-foreground">Chargement...</p>
+            ) : comments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Aucun commentaire</p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="flex gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-white text-xs">
+                      {getInitials(
+                        comment.profiles?.nom || "U",
+                        comment.profiles?.post_nom || "U"
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="bg-muted rounded-lg p-3">
+                      <p className="font-semibold text-sm">
+                        {comment.profiles?.nom} {comment.profiles?.post_nom}
+                      </p>
+                      <p className="text-sm mt-1">{comment.content}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 ml-3">
+                      {formatDistanceToNow(new Date(comment.created_at), {
+                        addSuffix: true,
+                        locale: fr,
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {currentUserId && (
+            <div className="mt-4 flex gap-2">
+              <Textarea
+                placeholder="Écrire un commentaire..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="min-h-[60px]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment();
+                  }
+                }}
+              />
+              <Button 
+                onClick={handleAddComment}
+                disabled={!newComment.trim()}
+                size="icon"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
