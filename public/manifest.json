@@ -80,9 +80,9 @@
     },
     {
       "src": "/asset/Screenshot.png",
-      "sizes": "1280x720",
+      "sizes": "390x844",
       "type": "image/png",
-      "form_factor": "wide"
+      "form_factor": "narrow"
     }
   ]
 }

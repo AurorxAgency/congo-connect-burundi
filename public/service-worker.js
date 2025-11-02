@@ -7,9 +7,11 @@ const urlsToCache = [
   '/src/App.tsx',
   '/src/index.css',
   '/manifest.json',
-  '/asset/Ccom.png',
+  '/asset/icons/icon-192x192.png',
+  '/asset/icons/icon-512x512.png',
   '/asset/icon-384x384.png',
-  '/asset/Screenshot 2025-11-02 115011.png'
+  '/asset/Screenshot 2025-11-02 115011.png',
+  '/asset/Screenshot.png'
 ];
 
 self.addEventListener('install', event => {
