@@ -18,8 +18,8 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/favicon.png",
-      "sizes": "192x192",
+      "src": "/asset/icon-384x384.png",
+      "sizes": "384x384",
       "type": "image/png",
       "purpose": "any maskable"
     },
@@ -32,7 +32,7 @@
   ],
   "screenshots": [
     {
-      "src": "/asset/Ccom.png",
+      "src": "/asset/Screenshot 2025-11-02 115011.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
