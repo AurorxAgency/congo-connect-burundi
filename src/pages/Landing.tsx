@@ -1,19 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-community.jpg";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <section className="relative overflow-hidden w-full">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
-        
-        <div className="container relative mx-auto px-4 py-24">
-          <div className="max-w-2xl mx-auto text-center space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <section className="relative w-full max-w-2xl mx-4">
+        <div className="relative p-8 md:p-12 rounded-3xl bg-card border-4 border-transparent bg-gradient-to-br from-primary via-secondary to-primary bg-clip-border shadow-2xl">
+          <div className="absolute inset-[4px] rounded-[calc(1.5rem-4px)] bg-card" />
+          
+          <div className="relative text-center space-y-8">
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
               Bienvenue dans votre
               <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
