@@ -25,6 +25,23 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
 
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      if (!currentUserId) return;
+
+      const { data } = await supabase
+        .from('post_likes')
+        .select('id')
+        .eq('post_id', post.id)
+        .eq('user_id', currentUserId)
+        .single();
+
+      setIsLiked(!!data);
+    };
+
+    checkIfLiked();
+  }, [currentUserId, post.id]);
+
   const handleLike = async () => {
     if (!currentUserId) return;
 
@@ -36,7 +53,7 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
           .eq('post_id', post.id)
           .eq('user_id', currentUserId);
         
-        setLikesCount(prev => prev - 1);
+        setLikesCount(prev => Math.max(0, prev - 1));
         setIsLiked(false);
       } else {
         await supabase
