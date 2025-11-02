@@ -1,5 +1,5 @@
 // public/service-worker.js
-const CACHE_NAME = 'congo-connect-cache-v1';
+const CACHE_NAME = 'congo-connect-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
