@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share2, Send } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -39,7 +39,17 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
       setIsLiked(!!data);
     };
 
+    const fetchRealLikesCount = async () => {
+      const { count } = await supabase
+        .from('post_likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('post_id', post.id);
+      
+      setLikesCount(count || 0);
+    };
+
     checkIfLiked();
+    fetchRealLikesCount();
   }, [currentUserId, post.id]);
 
   const handleLike = async () => {
@@ -139,6 +149,32 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!currentUserId || currentUserId !== post.user_id) return;
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Publication supprimée",
+      });
+      
+      onUpdate();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const getInitials = (nom: string, postNom: string) => {
     return `${nom.charAt(0)}${postNom.charAt(0)}`.toUpperCase();
   };
@@ -162,6 +198,16 @@ const PostCard = ({ post, currentUserId, onUpdate }: PostCardProps) => {
           </p>
           <p className="text-sm text-muted-foreground">{timeAgo}</p>
         </div>
+        {currentUserId === post.user_id && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDelete}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         <p className="whitespace-pre-wrap">{post.content}</p>
