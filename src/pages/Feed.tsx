@@ -15,35 +15,27 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error || !session) {
-          // Clear invalid session
-          await supabase.auth.signOut();
-          navigate("/auth");
-          return;
-        }
-        
-        setUser(session.user);
-        await fetchPosts();
-      } catch (error) {
-        console.error("Auth error:", error);
-        await supabase.auth.signOut();
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      
+      // Defer posts fetch to avoid deadlock
+      if (session) {
+        setTimeout(() => {
+          fetchPosts();
+        }, 0);
+      } else {
         navigate("/auth");
       }
-    };
+    });
 
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!session) {
-        setUser(null);
-        navigate("/auth");
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session) {
+        fetchPosts();
       } else {
-        setUser(session.user);
-        await fetchPosts();
+        navigate("/auth");
       }
     });
 
