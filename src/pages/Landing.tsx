@@ -10,7 +10,7 @@ const Landing = () => {
           
           <div className="relative text-center space-y-8">
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Bienvenue dans votre
+              Bienvenue dans la
               <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Communauté Congolaise
               </span>
