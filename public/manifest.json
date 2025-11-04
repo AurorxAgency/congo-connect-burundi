@@ -4,7 +4,7 @@
   "description": "Application communautaire moderne pour les Congolais vivant au Burundi. Partage d'actualités, événements culturels, opportunités professionnelles et connexion entre membres.",
   "id": "com.congo.connect.burundi",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#00A4FF",
   "orientation": "portrait",
