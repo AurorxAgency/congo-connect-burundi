@@ -13,6 +13,7 @@ interface Message {
   content: string;
   created_at: string;
   mentioned_post_id: string | null;
+  user_id: string;
   profiles: {
     nom: string;
     post_nom: string;
@@ -199,33 +200,42 @@ const Discussions = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar user={user} />
       
-      <div className="flex-1 container mx-auto px-4 py-6 flex flex-col max-w-4xl">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="bg-primary/10 p-3 rounded-lg">
-            <Users className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">Salon de Discussion</h1>
-            <p className="text-muted-foreground">Discutez avec tous les membres de la communauté</p>
+      <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full">
+        {/* Chat Header */}
+        <div className="bg-card border-b px-4 py-3 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="bg-primary/10 p-2 rounded-full">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold">Salon Général</h1>
+              <p className="text-xs text-muted-foreground">Discussion communautaire</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4 min-h-[400px] max-h-[600px] p-4 bg-muted/20 rounded-lg">
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/5">
           {loading ? (
-            <>
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </>
+            <div className="space-y-3">
+              <Skeleton className="h-20 w-3/4" />
+              <Skeleton className="h-20 w-3/4 ml-auto" />
+              <Skeleton className="h-20 w-3/4" />
+            </div>
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
-              <p>Aucun message pour le moment. Soyez le premier à écrire !</p>
+              <div className="text-center">
+                <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>Aucun message pour le moment.</p>
+                <p className="text-sm">Soyez le premier à écrire !</p>
+              </div>
             </div>
           ) : (
             messages.map((message) => (
               <DiscussionMessage
                 key={message.id}
                 message={message}
+                currentUserId={user?.id}
                 mentionedPost={
                   message.mentioned_post_id
                     ? mentionedPosts[message.mentioned_post_id]
@@ -237,11 +247,14 @@ const Discussions = () => {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Send Message Input */}
         {user && (
-          <SendMessage
-            userId={user.id}
-            onMessageSent={() => {}}
-          />
+          <div className="border-t bg-card">
+            <SendMessage
+              userId={user.id}
+              onMessageSent={() => {}}
+            />
+          </div>
         )}
       </div>
     </div>

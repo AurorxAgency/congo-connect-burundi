@@ -82,46 +82,60 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
   };
 
   return (
-    <div className="space-y-3 p-4 bg-card border rounded-lg">
-      <Textarea
-        placeholder="Écrivez votre message..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="min-h-[80px] resize-none"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-          }
-        }}
-      />
-      
-      <div className="flex items-center space-x-2">
-        <div className="flex-1 flex items-center space-x-2">
-          <LinkIcon className="h-4 w-4 text-muted-foreground" />
-          <Select value={mentionedPostId} onValueChange={setMentionedPostId}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Mentionner une publication (optionnel)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Aucune publication</SelectItem>
-              {posts.map((post) => (
-                <SelectItem key={post.id} value={post.id}>
-                  {post.content.substring(0, 50)}
-                  {post.content.length > 50 ? "..." : ""}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="p-3 space-y-2">
+      {mentionedPostId && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg text-sm">
+          <LinkIcon className="h-3 w-3 text-primary" />
+          <span className="flex-1 text-muted-foreground">
+            Publication mentionnée: {posts.find(p => p.id === mentionedPostId)?.content.substring(0, 40)}...
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={() => setMentionedPostId("")}
+          >
+            ×
+          </Button>
         </div>
+      )}
+      
+      <div className="flex items-end gap-2">
+        <Select value={mentionedPostId} onValueChange={setMentionedPostId}>
+          <SelectTrigger className="w-10 h-10 p-0 shrink-0">
+            <LinkIcon className="h-4 w-4 text-muted-foreground" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Aucune publication</SelectItem>
+            {posts.map((post) => (
+              <SelectItem key={post.id} value={post.id}>
+                {post.content.substring(0, 50)}
+                {post.content.length > 50 ? "..." : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Textarea
+          placeholder="Écrivez votre message..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="min-h-[40px] max-h-[120px] resize-none flex-1"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+        />
         
         <Button 
           onClick={handleSend} 
           disabled={sending || !content.trim()}
-          size="sm"
+          size="icon"
+          className="h-10 w-10 rounded-full shrink-0"
         >
-          <Send className="h-4 w-4 mr-2" />
-          Envoyer
+          <Send className="h-4 w-4" />
         </Button>
       </div>
     </div>
