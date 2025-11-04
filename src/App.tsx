@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Feed from "./pages/Feed";
 import Activities from "./pages/Activities";
 import Discussions from "./pages/Discussions";
+import PrivateChats from "./pages/PrivateChats";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/feed" element={<Feed />} />
             <Route path="/activities" element={<Activities />} />
             <Route path="/discussions" element={<Discussions />} />
+            <Route path="/chats" element={<PrivateChats />} />
             <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Users, Calendar, MessageCircle, LogOut, UserCircle } from "lucide-react";
+import { Home, Users, Calendar, MessageCircle, LogOut, UserCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -73,7 +73,18 @@ const Navbar = ({ user }: NavbarProps) => {
               >
                 <Link to="/discussions">
                   <MessageCircle className="h-4 w-4 md:mr-2" />
-                  <span className="hidden md:inline">Discussions</span>
+                  <span className="hidden md:inline">Salon</span>
+                </Link>
+              </Button>
+
+              <Button
+                variant={isActive("/chats") ? "default" : "ghost"}
+                size="sm"
+                asChild
+              >
+                <Link to="/chats">
+                  <Mail className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Messages</span>
                 </Link>
               </Button>
 
