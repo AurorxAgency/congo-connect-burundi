@@ -19,7 +19,7 @@ interface Post {
 const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
   const { toast } = useToast();
   const [content, setContent] = useState("");
-  const [mentionedPostId, setMentionedPostId] = useState<string>("");
+  const [mentionedPostId, setMentionedPostId] = useState<string>("none");
   const [posts, setPosts] = useState<Post[]>([]);
   const [sending, setSending] = useState(false);
 
@@ -54,16 +54,17 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
 
     setSending(true);
     try {
+      const postId = mentionedPostId === "none" ? null : mentionedPostId;
       const { error } = await supabase.from("discussion_messages").insert({
         user_id: userId,
         content: content.trim(),
-        mentioned_post_id: mentionedPostId || null,
+        mentioned_post_id: postId,
       });
 
       if (error) throw error;
 
       setContent("");
-      setMentionedPostId("");
+      setMentionedPostId("none");
       onMessageSent();
       
       toast({
@@ -83,7 +84,7 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
 
   return (
     <div className="p-3 space-y-2">
-      {mentionedPostId && (
+      {mentionedPostId && mentionedPostId !== "none" && (
         <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg text-sm">
           <LinkIcon className="h-3 w-3 text-primary" />
           <span className="flex-1 text-muted-foreground">
@@ -93,7 +94,7 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
             variant="ghost"
             size="sm"
             className="h-6 w-6 p-0"
-            onClick={() => setMentionedPostId("")}
+            onClick={() => setMentionedPostId("none")}
           >
             ×
           </Button>
@@ -106,7 +107,7 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
             <LinkIcon className="h-4 w-4 text-muted-foreground" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Aucune publication</SelectItem>
+            <SelectItem value="none">Aucune publication</SelectItem>
             {posts.map((post) => (
               <SelectItem key={post.id} value={post.id}>
                 {post.content.substring(0, 50)}
