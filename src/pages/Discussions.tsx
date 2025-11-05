@@ -33,6 +33,7 @@ const Discussions = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [mentionedPosts, setMentionedPosts] = useState<Record<string, MentionedPost>>({});
   const [loading, setLoading] = useState(true);
+  const [forwardedContent, setForwardedContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -241,6 +242,8 @@ const Discussions = () => {
                     ? mentionedPosts[message.mentioned_post_id]
                     : null
                 }
+                onForward={(content) => setForwardedContent(content)}
+                onDelete={() => fetchMessages()}
               />
             ))
           )}
@@ -253,6 +256,8 @@ const Discussions = () => {
             <SendMessage
               userId={user.id}
               onMessageSent={() => {}}
+              forwardedContent={forwardedContent}
+              onForwardedContentUsed={() => setForwardedContent("")}
             />
           </div>
         )}

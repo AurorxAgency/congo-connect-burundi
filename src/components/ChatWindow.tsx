@@ -7,7 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Send } from "lucide-react";
+import { Send, MoreVertical, Forward, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast as sonnerToast } from "sonner";
 
 interface Message {
   id: string;
@@ -176,6 +183,27 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
     }
   };
 
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('private_messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (error) throw error;
+
+      sonnerToast.success("Message supprimé");
+      fetchMessages();
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      sonnerToast.error("Erreur lors de la suppression");
+    }
+  };
+
+  const handleForwardMessage = (messageContent: string) => {
+    setContent(messageContent);
+  };
+
   const getInitials = (nom: string, postNom: string) => {
     return `${nom.charAt(0)}${postNom.charAt(0)}`.toUpperCase();
   };
@@ -238,13 +266,39 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
                   }`}
                 >
                   <div
-                    className={`rounded-2xl px-4 py-2 ${
+                    className={`rounded-2xl px-4 py-2 group relative ${
                       isCurrentUser
                         ? "bg-primary text-primary-foreground rounded-tr-sm"
                         : "bg-card border rounded-tl-sm"
                     }`}
                   >
-                    <p className="text-sm break-words">{message.content}</p>
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm break-words flex-1">{message.content}</p>
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleForwardMessage(message.content)}>
+                            <Forward className="h-4 w-4 mr-2" />
+                            Retransférer
+                          </DropdownMenuItem>
+                          {isCurrentUser && (
+                            <DropdownMenuItem onClick={() => handleDeleteMessage(message.id)} className="text-destructive">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Supprimer
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
 
                   <span className="text-xs text-muted-foreground mt-1 px-1">

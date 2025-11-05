@@ -2,6 +2,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { MoreVertical, Forward, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface DiscussionMessageProps {
   message: {
@@ -21,14 +31,37 @@ interface DiscussionMessageProps {
     content: string;
     image_url: string | null;
   } | null;
+  onForward?: (content: string) => void;
+  onDelete?: () => void;
 }
 
-const DiscussionMessage = ({ message, currentUserId, mentionedPost }: DiscussionMessageProps) => {
+const DiscussionMessage = ({ message, currentUserId, mentionedPost, onForward, onDelete }: DiscussionMessageProps) => {
   const getInitials = () => {
     return `${message.profiles.nom.charAt(0)}${message.profiles.post_nom.charAt(0)}`.toUpperCase();
   };
 
   const isCurrentUser = message.user_id === currentUserId;
+
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('discussion_messages')
+        .delete()
+        .eq('id', message.id);
+
+      if (error) throw error;
+
+      toast.success("Message supprimé");
+      onDelete?.();
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  const handleForward = () => {
+    onForward?.(message.content);
+  };
 
   return (
     <div className={`flex items-start gap-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -52,8 +85,34 @@ const DiscussionMessage = ({ message, currentUserId, mentionedPost }: Discussion
           isCurrentUser 
             ? 'bg-primary text-primary-foreground rounded-tr-sm' 
             : 'bg-card border rounded-tl-sm'
-        }`}>
-          <p className="text-sm break-words">{message.content}</p>
+        } group relative`}>
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-sm break-words flex-1">{message.content}</p>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleForward}>
+                  <Forward className="h-4 w-4 mr-2" />
+                  Retransférer
+                </DropdownMenuItem>
+                {isCurrentUser && (
+                  <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Supprimer
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           
           {mentionedPost && (
             <div className={`mt-2 p-2 rounded-lg border-l-2 ${

@@ -9,6 +9,8 @@ import { Send, Link as LinkIcon } from "lucide-react";
 interface SendMessageProps {
   userId: string;
   onMessageSent: () => void;
+  forwardedContent?: string;
+  onForwardedContentUsed?: () => void;
 }
 
 interface Post {
@@ -16,7 +18,7 @@ interface Post {
   content: string;
 }
 
-const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
+const SendMessage = ({ userId, onMessageSent, forwardedContent, onForwardedContentUsed }: SendMessageProps) => {
   const { toast } = useToast();
   const [content, setContent] = useState("");
   const [mentionedPostId, setMentionedPostId] = useState<string>("none");
@@ -26,6 +28,13 @@ const SendMessage = ({ userId, onMessageSent }: SendMessageProps) => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (forwardedContent) {
+      setContent(forwardedContent);
+      onForwardedContentUsed?.();
+    }
+  }, [forwardedContent, onForwardedContentUsed]);
 
   const fetchPosts = async () => {
     try {
