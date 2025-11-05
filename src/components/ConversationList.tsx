@@ -155,15 +155,20 @@ const ConversationList = ({
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-3 border-b flex items-center justify-between">
-        <h2 className="font-semibold">Messages</h2>
-        <Button size="icon" variant="ghost" onClick={onNewChat}>
+    <div className="flex flex-col h-full bg-background">
+      <div className="p-4 bg-primary text-primary-foreground flex items-center justify-between shadow-md">
+        <h2 className="font-semibold text-lg">Messages</h2>
+        <Button 
+          size="icon" 
+          variant="ghost" 
+          onClick={onNewChat}
+          className="text-primary-foreground hover:bg-primary-foreground/10"
+        >
           <MessageSquarePlus className="h-5 w-5" />
         </Button>
       </div>
       
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-background">
         {conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full p-4 text-center text-muted-foreground">
             <MessageSquarePlus className="h-12 w-12 mb-2 opacity-50" />
@@ -172,15 +177,15 @@ const ConversationList = ({
           </div>
         ) : (
           conversations.map((conv) => (
-            <Card
+            <div
               key={conv.id}
-              className={`p-3 m-2 cursor-pointer hover:bg-muted/50 transition-colors ${
-                selectedConversationId === conv.id ? "bg-muted" : ""
+              className={`px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors border-b ${
+                selectedConversationId === conv.id ? "bg-muted/70" : ""
               }`}
               onClick={() => onSelectConversation(conv.id)}
             >
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
+                <Avatar className="h-12 w-12 shrink-0">
                   <AvatarImage src={conv.other_user.document_identite_url || undefined} />
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {getInitials(conv.other_user.nom, conv.other_user.post_nom)}
@@ -188,11 +193,11 @@ const ConversationList = ({
                 </Avatar>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-1">
                     <p className="font-semibold truncate">
                       {conv.other_user.nom} {conv.other_user.post_nom}
                     </p>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground shrink-0 ml-2">
                       {formatDistanceToNow(new Date(conv.last_message_at), {
                         addSuffix: true,
                         locale: fr,
@@ -207,7 +212,7 @@ const ConversationList = ({
                   )}
                 </div>
               </div>
-            </Card>
+            </div>
           ))
         )}
       </div>

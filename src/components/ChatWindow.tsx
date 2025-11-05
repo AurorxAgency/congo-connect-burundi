@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Send, MoreVertical, Forward, Trash2 } from "lucide-react";
+import { Send, MoreVertical, Forward, Trash2, ArrowLeft } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,9 +31,10 @@ interface Message {
 interface ChatWindowProps {
   conversationId: string;
   currentUserId: string;
+  onBack?: () => void;
 }
 
-const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
+const ChatWindow = ({ conversationId, currentUserId, onBack }: ChatWindowProps) => {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [otherUser, setOtherUser] = useState<any>(null);
@@ -214,23 +215,37 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Chat Header */}
-      <div className="bg-card border-b px-4 py-3 flex items-center gap-3">
-        <Avatar className="h-10 w-10">
+      {/* Chat Header - WhatsApp Style */}
+      <div className="bg-primary text-primary-foreground px-4 py-3 flex items-center gap-3 shadow-md">
+        {onBack && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            className="md:hidden h-9 w-9 text-primary-foreground hover:bg-primary-foreground/10"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <Avatar className="h-10 w-10 ring-2 ring-primary-foreground/20">
           <AvatarImage src={otherUser.document_identite_url || undefined} />
-          <AvatarFallback className="bg-primary text-primary-foreground">
+          <AvatarFallback className="bg-primary-foreground text-primary">
             {getInitials(otherUser.nom, otherUser.post_nom)}
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="flex-1">
           <p className="font-semibold">
             {otherUser.nom} {otherUser.post_nom}
           </p>
+          <p className="text-xs opacity-80">En ligne</p>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/5">
+      {/* Messages - WhatsApp Background Pattern */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#e5ddd5] dark:bg-[#0b141a]" style={{
+        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h100v100H0z\' fill=\'none\'/%3E%3Cpath d=\'M20 20h60v60H20z\' fill=\'%23ffffff\' fill-opacity=\'0.02\'/%3E%3C/svg%3E")',
+        backgroundSize: '100px 100px'
+      }}>
         {loading ? (
           <div className="space-y-3">
             <Skeleton className="h-20 w-3/4" />
@@ -261,15 +276,15 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
                 )}
 
                 <div
-                  className={`flex flex-col max-w-[75%] ${
+                  className={`flex flex-col max-w-[75%] md:max-w-[65%] ${
                     isCurrentUser ? "items-end" : "items-start"
                   }`}
                 >
                   <div
-                    className={`rounded-2xl px-4 py-2 group relative ${
+                    className={`rounded-lg px-3 py-2 group relative shadow-sm ${
                       isCurrentUser
-                        ? "bg-primary text-primary-foreground rounded-tr-sm"
-                        : "bg-card border rounded-tl-sm"
+                        ? "bg-[#dcf8c6] dark:bg-[#005c4b] text-foreground rounded-br-none"
+                        : "bg-white dark:bg-[#1f2c33] text-foreground rounded-bl-none"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -324,14 +339,14 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Send Message Input */}
-      <div className="border-t bg-card p-3">
+      {/* Send Message Input - WhatsApp Style */}
+      <div className="bg-background border-t p-2 md:p-3">
         <div className="flex items-end gap-2">
           <Textarea
-            placeholder="Écrivez votre message..."
+            placeholder="Message"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[40px] max-h-[120px] resize-none flex-1"
+            className="min-h-[40px] max-h-[120px] resize-none flex-1 rounded-3xl bg-muted/50 border-0 focus-visible:ring-1"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -344,7 +359,7 @@ const ChatWindow = ({ conversationId, currentUserId }: ChatWindowProps) => {
             onClick={handleSend}
             disabled={sending || !content.trim()}
             size="icon"
-            className="h-10 w-10 rounded-full shrink-0"
+            className="h-10 w-10 rounded-full shrink-0 bg-primary hover:bg-primary/90"
           >
             <Send className="h-4 w-4" />
           </Button>

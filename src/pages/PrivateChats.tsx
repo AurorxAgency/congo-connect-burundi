@@ -45,12 +45,14 @@ const PrivateChats = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-muted/30 flex flex-col">
       <Navbar user={user} />
 
-      <div className="flex-1 flex max-w-7xl mx-auto w-full border-x">
-        {/* Conversations List Sidebar */}
-        <div className="w-80 border-r bg-card">
+      <div className="flex-1 flex max-w-7xl mx-auto w-full">
+        {/* Conversations List Sidebar - Hidden on mobile when chat is selected */}
+        <div className={`${
+          selectedConversation ? "hidden md:flex" : "flex"
+        } w-full md:w-96 border-r bg-background flex-col`}>
           <ConversationList
             userId={user.id}
             onSelectConversation={setSelectedConversation}
@@ -59,12 +61,15 @@ const PrivateChats = () => {
           />
         </div>
 
-        {/* Chat Window */}
-        <div className="flex-1">
+        {/* Chat Window - Hidden on mobile when no chat is selected */}
+        <div className={`${
+          selectedConversation ? "flex" : "hidden md:flex"
+        } flex-1 flex-col bg-background`}>
           {selectedConversation ? (
             <ChatWindow
               conversationId={selectedConversation}
               currentUserId={user.id}
+              onBack={() => setSelectedConversation(null)}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
