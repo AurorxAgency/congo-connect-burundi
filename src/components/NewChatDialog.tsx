@@ -110,26 +110,15 @@ const NewChatDialog = ({
         }
       }
 
-      // Create new conversation
-      const { data: conversation, error: convError } = await supabase
-        .from("conversations")
-        .insert({})
-        .select()
-        .single();
+      // Create new conversation using secure function
+      const { data: conversationId, error: conversationError } = await supabase
+        .rpc("create_conversation_with_participants", {
+          participant_user_ids: [currentUserId, otherUserId],
+        });
 
-      if (convError) throw convError;
+      if (conversationError) throw conversationError;
 
-      // Add participants
-      const { error: participantsError } = await supabase
-        .from("conversation_participants")
-        .insert([
-          { conversation_id: conversation.id, user_id: currentUserId },
-          { conversation_id: conversation.id, user_id: otherUserId },
-        ]);
-
-      if (participantsError) throw participantsError;
-
-      onConversationCreated(conversation.id);
+      onConversationCreated(conversationId);
       onOpenChange(false);
       
       toast({
@@ -137,9 +126,10 @@ const NewChatDialog = ({
         description: "Vous pouvez maintenant commencer à discuter",
       });
     } catch (error: any) {
+      console.error("Error creating conversation:", error);
       toast({
         title: "Erreur",
-        description: "Impossible de créer la conversation",
+        description: error.message || "Impossible de créer la conversation",
         variant: "destructive",
       });
     } finally {
