@@ -156,13 +156,13 @@ const ConversationList = ({
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="p-4 bg-primary text-primary-foreground flex items-center justify-between shadow-md">
-        <h2 className="font-semibold text-lg">Messages</h2>
+      <div className="p-4 bg-background border-b flex items-center justify-between">
+        <h2 className="font-bold text-2xl text-foreground">Messages</h2>
         <Button 
           size="icon" 
           variant="ghost" 
           onClick={onNewChat}
-          className="text-primary-foreground hover:bg-primary-foreground/10"
+          className="hover:bg-muted"
         >
           <MessageSquarePlus className="h-5 w-5" />
         </Button>
@@ -179,13 +179,13 @@ const ConversationList = ({
           conversations.map((conv) => (
             <div
               key={conv.id}
-              className={`px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors border-b ${
-                selectedConversationId === conv.id ? "bg-muted/70" : ""
+              className={`px-4 py-3 cursor-pointer hover:bg-muted/70 transition-colors ${
+                selectedConversationId === conv.id ? "bg-muted" : ""
               }`}
               onClick={() => onSelectConversation(conv.id)}
             >
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12 shrink-0">
+                <Avatar className="h-14 w-14 shrink-0">
                   <AvatarImage src={conv.other_user.document_identite_url || undefined} />
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {getInitials(conv.other_user.nom, conv.other_user.post_nom)}
@@ -194,7 +194,7 @@ const ConversationList = ({
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="font-semibold truncate">
+                    <p className="font-semibold truncate text-foreground">
                       {conv.other_user.nom} {conv.other_user.post_nom}
                     </p>
                     <span className="text-xs text-muted-foreground shrink-0 ml-2">

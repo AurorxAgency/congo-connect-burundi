@@ -59,6 +59,12 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Messenger-style colors */
+    --messenger-blue: 214 89% 52%;
+    --messenger-gray: 220 13% 91%;
+    --message-sent: 214 89% 52%;
+    --message-received: 220 13% 95%;
   }
 
   .dark {
@@ -98,6 +104,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Messenger-style colors for dark mode */
+    --messenger-blue: 214 89% 52%;
+    --messenger-gray: 220 20% 25%;
+    --message-sent: 214 89% 52%;
+    --message-received: 220 20% 25%;
   }
 }
 
