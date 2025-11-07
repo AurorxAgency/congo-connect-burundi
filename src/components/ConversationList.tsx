@@ -28,6 +28,7 @@ interface ConversationListProps {
   onSelectConversation: (conversationId: string) => void;
   selectedConversationId: string | null;
   onNewChat: () => void;
+  refreshTrigger?: number;
 }
 
 const ConversationList = ({
@@ -35,6 +36,7 @@ const ConversationList = ({
   onSelectConversation,
   selectedConversationId,
   onNewChat,
+  refreshTrigger,
 }: ConversationListProps) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,7 @@ const ConversationList = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
   const fetchConversations = async () => {
     try {

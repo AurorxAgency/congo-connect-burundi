@@ -12,6 +12,7 @@ const PrivateChats = () => {
   const [user, setUser] = useState<any>(null);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [showNewChatDialog, setShowNewChatDialog] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -58,6 +59,7 @@ const PrivateChats = () => {
             onSelectConversation={setSelectedConversation}
             selectedConversationId={selectedConversation}
             onNewChat={() => setShowNewChatDialog(true)}
+            refreshTrigger={refreshTrigger}
           />
         </div>
 
@@ -87,6 +89,7 @@ const PrivateChats = () => {
         currentUserId={user.id}
         onConversationCreated={(conversationId) => {
           setSelectedConversation(conversationId);
+          setRefreshTrigger(prev => prev + 1);
         }}
       />
     </div>
