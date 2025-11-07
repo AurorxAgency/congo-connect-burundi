@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Users, Calendar, MessageCircle, LogOut, UserCircle, Mail, MoreVertical, Moon, Sun } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Home, Users, Calendar, MessageCircle, LogOut, UserCircle, Mail, MoreVertical, Moon, Sun, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
@@ -42,16 +43,26 @@ const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/feed" className="flex items-center space-x-2">
+        <div className="flex items-center justify-between h-16 gap-4">
+          <Link to="/feed" className="flex items-center space-x-2 shrink-0">
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <Users className="h-6 w-6 text-white" />
             </div>
-            <span className="font-bold text-xl hidden md:inline">Communauté</span>
+            <span className="font-bold text-xl hidden lg:inline">Communauté</span>
           </Link>
 
           {user && (
-            <div className="flex items-center space-x-1 md:space-x-2">
+            <>
+              <div className="relative flex-1 max-w-md hidden md:block">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher..."
+                  className="pl-10 bg-muted/50 border-muted"
+                />
+              </div>
+
+              <div className="flex items-center space-x-1 md:space-x-2">
               <Button
                 variant={isActive("/feed") ? "default" : "ghost"}
                 size="sm"
@@ -135,6 +146,7 @@ const Navbar = ({ user }: NavbarProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            </>
           )}
 
           {!user && (
