@@ -75,15 +75,23 @@ const ConversationList = ({
         .select("conversation_id")
         .eq("user_id", userId);
 
-      if (participantError) throw participantError;
+      if (participantError) {
+        console.error("Error fetching participant data:", participantError);
+        throw participantError;
+      }
+
+      console.log("Participant data:", participantData);
 
       const conversationIds = participantData?.map((p) => p.conversation_id) || [];
 
       if (conversationIds.length === 0) {
+        console.log("No conversations found for user");
         setConversations([]);
         setLoading(false);
         return;
       }
+
+      console.log("Conversation IDs:", conversationIds);
 
       // Get conversation details
       const { data: conversationData, error: conversationError } = await supabase
@@ -92,25 +100,46 @@ const ConversationList = ({
         .in("id", conversationIds)
         .order("last_message_at", { ascending: false });
 
-      if (conversationError) throw conversationError;
+      if (conversationError) {
+        console.error("Error fetching conversations:", conversationError);
+        throw conversationError;
+      }
+
+      console.log("Conversation data:", conversationData);
 
       // For each conversation, get the other participant
       const conversationsWithUsers = await Promise.all(
         (conversationData || []).map(async (conv) => {
-          const { data: participants } = await supabase
+          console.log("Processing conversation:", conv.id);
+          
+          const { data: participants, error: participantsError } = await supabase
             .from("conversation_participants")
             .select("user_id")
             .eq("conversation_id", conv.id)
             .neq("user_id", userId);
 
+          if (participantsError) {
+            console.error("Error fetching participants:", participantsError);
+            return null;
+          }
+
+          console.log("Other participants:", participants);
+
           if (participants && participants.length > 0) {
             const otherUserId = participants[0].user_id;
             
-            const { data: profile } = await supabase
+            const { data: profile, error: profileError } = await supabase
               .from("profiles")
               .select("id, nom, post_nom, document_identite_url")
               .eq("id", otherUserId)
-              .single();
+              .maybeSingle();
+
+            if (profileError) {
+              console.error("Error fetching profile:", profileError);
+              return null;
+            }
+
+            console.log("Profile:", profile);
 
             // Get last message
             const { data: lastMessage } = await supabase
@@ -119,7 +148,9 @@ const ConversationList = ({
               .eq("conversation_id", conv.id)
               .order("created_at", { ascending: false })
               .limit(1)
-              .single();
+              .maybeSingle();
+
+            console.log("Last message:", lastMessage);
 
             if (profile) {
               return {
@@ -134,7 +165,9 @@ const ConversationList = ({
         })
       );
 
-      setConversations(conversationsWithUsers.filter((c) => c !== null) as Conversation[]);
+      const filteredConversations = conversationsWithUsers.filter((c) => c !== null) as Conversation[];
+      console.log("Final conversations:", filteredConversations);
+      setConversations(filteredConversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
     } finally {
