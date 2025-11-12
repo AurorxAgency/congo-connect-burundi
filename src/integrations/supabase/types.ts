@@ -17,30 +17,36 @@ export type Database = {
       activities: {
         Row: {
           activity_type: string
+          additional_info: string | null
           contact_info: string
           created_at: string
           description: string
           id: string
+          image_url: string | null
           name: string
           updated_at: string
           user_id: string
         }
         Insert: {
           activity_type: string
+          additional_info?: string | null
           contact_info: string
           created_at?: string
           description: string
           id?: string
+          image_url?: string | null
           name: string
           updated_at?: string
           user_id: string
         }
         Update: {
           activity_type?: string
+          additional_info?: string | null
           contact_info?: string
           created_at?: string
           description?: string
           id?: string
+          image_url?: string | null
           name?: string
           updated_at?: string
           user_id?: string
